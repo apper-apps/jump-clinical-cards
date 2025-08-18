@@ -1,0 +1,34 @@
+[
+  {
+    "Id": 1,
+    "title": "Lower Back Pain - Office Worker",
+    "complexity": "novice",
+    "speciality": "musculoskeletal",
+    "stages": [
+      {
+        "Id": 1,
+        "title": "Initial Presentation",
+        "content": "Sarah, a 32-year-old office worker, presents with a 3-week history of lower back pain. She reports the pain started gradually after moving house and has been progressively worsening. Pain is rated 6/10, worse in the morning and after prolonged sitting. She denies any leg pain, numbness, or tingling. No bladder or bowel dysfunction reported.",
+        "unlocked": true
+      },
+      {
+        "Id": 2,
+        "title": "Additional History",
+        "content": "Sarah works 8-10 hours daily at a desk with minimal ergonomic setup. She has been sedentary for the past 5 years since starting her current job. Previous episode of back pain 2 years ago resolved with physiotherapy. She reports high stress levels due to work deadlines and recent house move. Takes paracetamol 2-3 times daily with minimal relief. Sleep quality poor due to pain.",
+        "unlocked": false
+      },
+      {
+        "Id": 3,
+        "title": "Examination Findings",
+        "content": "Observation: Forward head posture, increased thoracic kyphosis, reduced lumbar lordosis. Movement: Lumbar flexion 50% limited by pain, extension reproduces symptoms. Lateral flexion limited bilaterally. Neurological: No neurological deficits, straight leg raise negative bilaterally. Palpation: Tender L4-L5 paraspinal muscles, increased muscle tension. Core stability: Poor transverse abdominis activation, positive prone instability test.",
+        "unlocked": false
+      },
+      {
+        "Id": 4,
+        "title": "Additional Investigations",
+        "content": "X-ray lumbar spine: No fractures, mild degenerative changes L4-L5 disc space narrowing consistent with age. Blood tests: Normal inflammatory markers (ESR, CRP). Work ergonomic assessment reveals poor monitor height, inadequate lumbar support, prolonged static postures without breaks. Patient demonstrates poor lifting technique when asked to demonstrate how she moved boxes.",
+        "unlocked": false
+      }
+    ]
+  }
+]

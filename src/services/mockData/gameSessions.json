@@ -1,0 +1,13 @@
+[
+  {
+    "Id": 1,
+    "caseId": 1,
+    "hypotheses": [],
+    "currentStage": 1,
+    "score": {
+      "diversity": 0,
+      "coverage": 0,
+      "reasoning": 0
+    }
+  }
+]

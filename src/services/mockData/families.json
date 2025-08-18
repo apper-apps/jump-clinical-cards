@@ -1,0 +1,72 @@
+[
+  {
+    "Id": 1,
+    "name": "Psychosocial Factors",
+    "color": "#E85D75",
+    "icon": "Heart",
+    "description": "Psychological, social, and behavioral factors influencing the condition"
+  },
+  {
+    "Id": 2,
+    "name": "Source of Symptoms",
+    "color": "#F7B731",
+    "icon": "MapPin",
+    "description": "The anatomical or physiological origin of the patient's symptoms"
+  },
+  {
+    "Id": 3,
+    "name": "Pain Type/Mechanism",
+    "color": "#67B26F",
+    "icon": "Zap",
+    "description": "The underlying mechanism driving the pain experience"
+  },
+  {
+    "Id": 4,
+    "name": "Pathology",
+    "color": "#4A90A4",
+    "icon": "Microscope",
+    "description": "Underlying tissue damage or disease processes"
+  },
+  {
+    "Id": 5,
+    "name": "Impairments",
+    "color": "#A855F7",
+    "icon": "Activity",
+    "description": "Body structure and function limitations identified through assessment"
+  },
+  {
+    "Id": 6,
+    "name": "Contributing Factors",
+    "color": "#06B6D4",
+    "icon": "Link",
+    "description": "Factors that may have contributed to the development or persistence of the condition"
+  },
+  {
+    "Id": 7,
+    "name": "Contraindications/Precautions",
+    "color": "#EF4444",
+    "icon": "AlertTriangle",
+    "description": "Safety considerations and precautions for treatment planning"
+  },
+  {
+    "Id": 8,
+    "name": "Management Priorities",
+    "color": "#10B981",
+    "icon": "Target",
+    "description": "Key priorities for treatment and management approach"
+  },
+  {
+    "Id": 9,
+    "name": "Prognosis",
+    "color": "#8B5CF6",
+    "icon": "TrendingUp",
+    "description": "Expected outcome and recovery timeline considerations"
+  },
+  {
+    "Id": 10,
+    "name": "Activities & Participation",
+    "color": "#F59E0B",
+    "icon": "Users",
+    "description": "Impact on daily activities, work, and social participation"
+  }
+]

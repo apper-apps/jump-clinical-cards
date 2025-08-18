@@ -1,0 +1,105 @@
+@import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+.Toastify__toast-container {
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  @apply bg-white shadow-xl rounded-lg border-l-4 border-primary;
+  font-family: 'Inter', sans-serif;
+}
+
+.Toastify__toast--success {
+  @apply border-l-success;
+}
+
+.Toastify__toast--error {
+  @apply border-l-error;
+}
+
+.Toastify__toast--warning {
+  @apply border-l-warning;
+}
+
+.Toastify__toast--info {
+  @apply border-l-info;
+}
+
+.Toastify__toast-body {
+  @apply text-gray-800 text-sm;
+}
+
+.Toastify__progress-bar {
+  @apply bg-primary;
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .drag-preview {
+    @apply transform scale-105 shadow-2xl rotate-2;
+  }
+  
+  .drop-zone-active {
+    @apply ring-2 ring-accent ring-opacity-50 bg-accent bg-opacity-5;
+  }
+  
+  .hypothesis-card {
+    @apply bg-white rounded-lg shadow-md border-t-4 cursor-grab transition-all duration-200;
+  }
+  
+  .hypothesis-card:hover {
+    @apply transform scale-102 shadow-lg;
+  }
+  
+  .hypothesis-card:active {
+    @apply cursor-grabbing;
+  }
+  
+  .family-card {
+    @apply bg-white rounded-lg shadow-sm border transition-all duration-200 min-h-[120px];
+  }
+  
+  .family-card:hover {
+    @apply shadow-md transform scale-102;
+  }
+  
+  .case-stage-tab {
+    @apply px-4 py-2 rounded-t-lg border-b-2 transition-all duration-200 cursor-pointer;
+  }
+  
+  .case-stage-tab.active {
+    @apply border-primary bg-white text-primary;
+  }
+  
+  .case-stage-tab.inactive {
+    @apply border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200;
+  }
+  
+  .case-stage-tab.locked {
+    @apply bg-gray-50 text-gray-400 cursor-not-allowed;
+  }
+}
+
+@layer utilities {
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+}
