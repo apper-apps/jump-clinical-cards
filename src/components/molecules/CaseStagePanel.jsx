@@ -72,8 +72,9 @@ const CaseStagePanel = ({
                       isCompleted ? "text-success" : 
                       isUnlocked ? "text-gray-700" : "text-gray-400"
                     )}>
-                    {stage.title}
+{stage.title}
                   </span>
+                </div>
                 </div>
                 
                 {isActive && (
