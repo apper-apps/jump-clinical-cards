@@ -20,7 +20,11 @@ const CollaborativeHypothesisWorkspace = ({
   onSubmitForReview,
   onAddComment,
   onAddDiscussionThread,
-  className 
+  educationalMode = false,
+  facilitatorView = false,
+  educationalMetrics = {},
+  learningMilestones = [],
+  className
 }) => {
   const [editingHypothesis, setEditingHypothesis] = useState(null);
 
@@ -89,7 +93,19 @@ const CollaborativeHypothesisWorkspace = ({
   const peerHypotheses = hypotheses.filter(h => h.authorId !== "current-user");
   const pendingReviewHypotheses = hypotheses.filter(h => h.status === "pending-review");
 
-  const getPhaseInstructions = () => {
+const getPhaseInstructions = () => {
+  if (educationalMode) {
+    switch (currentPhase) {
+      case "individual":
+        return "Educational Focus: Develop systematic clinical reasoning through independent hypothesis generation. Emphasize evidence-based rationales and thorough clinical thinking.";
+      case "peer-review":
+        return "Educational Focus: Engage in constructive peer assessment and collaborative learning. Provide evidence-based feedback and calibrate clinical judgments with peers.";
+      case "synthesis":
+        return "Educational Focus: Synthesize individual and peer insights into comprehensive group conclusions. Demonstrate consensus-building and reflective professional practice.";
+      default:
+        return "Comprehensive educational clinical reasoning workspace with structured learning progression.";
+    }
+  } else {
     switch (currentPhase) {
       case "individual":
         return "Generate your individual hypotheses based on the case information. Focus on quality clinical reasoning.";
@@ -100,7 +116,8 @@ const CollaborativeHypothesisWorkspace = ({
       default:
         return "Collaborative clinical reasoning workspace.";
     }
-  };
+  }
+};
 
   return (
     <div className={className}>
@@ -124,16 +141,24 @@ const CollaborativeHypothesisWorkspace = ({
                 {hypotheses.length} Total
               </Badge>
               
-              {currentPhase === "individual" && (
+{currentPhase === "individual" && (
+              <div className="flex items-center space-x-3">
                 <Button
                   onClick={handleCreateNew}
                   className="bg-gradient-to-r from-primary to-secondary text-white"
                   size="sm"
                 >
                   <ApperIcon name="Plus" className="w-4 h-4 mr-2" />
-                  New Hypothesis
+                  {educationalMode ? "Create Learning Hypothesis" : "New Hypothesis"}
                 </Button>
-              )}
+                
+                {educationalMode && facilitatorView && (
+                  <div className="text-xs text-gray-600 bg-blue-50 px-2 py-1 rounded">
+                    Learning Objective: {educationalMetrics?.learningObjectiveProgress || 0}% Complete
+                  </div>
+                )}
+              </div>
+            )}
             </div>
           </div>
         </div>
@@ -217,12 +242,34 @@ const CollaborativeHypothesisWorkspace = ({
                         
                         {/* Comment Section for Peer Review */}
                         {currentPhase === "peer-review" && (
-<div className="mt-2 p-3 bg-gray-50 rounded-lg border">
-                            <div className="mb-2">
-                              <h5 className="text-xs font-medium text-gray-700 mb-1">
-                                Hypothesis Discussion Thread
+<div className="mt-2 p-3 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg border border-blue-200">
+                            <div className="mb-3">
+                              <h5 className="text-sm font-semibold text-gray-800 mb-2 flex items-center space-x-2">
+                                <ApperIcon name="MessageSquareText" className="w-4 h-4 text-blue-600" />
+                                <span>{educationalMode ? "Educational Assessment & Peer Learning" : "Hypothesis Discussion Thread"}</span>
                               </h5>
-                              <div className="flex flex-wrap gap-1 mb-2">
+                              
+                              {educationalMode && (
+                                <div className="mb-2 p-2 bg-white rounded border">
+                                  <div className="text-xs font-medium text-gray-700 mb-1">Learning Focus Areas:</div>
+                                  <div className="flex flex-wrap gap-1">
+                                    <Badge variant="outline" size="xs" className="text-blue-600 border-blue-300 bg-blue-50">
+                                      Evidence Integration
+                                    </Badge>
+                                    <Badge variant="outline" size="xs" className="text-green-600 border-green-300 bg-green-50">
+                                      Clinical Reasoning
+                                    </Badge>
+                                    <Badge variant="outline" size="xs" className="text-purple-600 border-purple-300 bg-purple-50">
+                                      Peer Calibration
+                                    </Badge>
+                                    <Badge variant="outline" size="xs" className="text-orange-600 border-orange-300 bg-orange-50">
+                                      Reflective Practice
+                                    </Badge>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <div className="flex flex-wrap gap-1">
                                 <Badge variant="outline" size="xs" className="text-blue-600 border-blue-200">
                                   Evidence Evaluation
                                 </Badge>
@@ -232,32 +279,47 @@ const CollaborativeHypothesisWorkspace = ({
                                 <Badge variant="outline" size="xs" className="text-purple-600 border-purple-200">
                                   Alternative Perspective
                                 </Badge>
+                                {educationalMode && (
+                                  <Badge variant="outline" size="xs" className="text-orange-600 border-orange-200">
+                                    Educational Assessment
+                                  </Badge>
+                                )}
                               </div>
                             </div>
                             
-                            <div className="space-y-2">
-                              <div className="flex space-x-1">
-                                <select className="text-xs border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary">
+                            <div className="space-y-3">
+                              <div className="flex space-x-2">
+                                <select className="text-xs border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-white">
                                   <option value="evidence-support">Support with Evidence</option>
                                   <option value="evidence-challenge">Challenge with Evidence</option>
                                   <option value="confidence-calibration">Confidence Discussion</option>
                                   <option value="alternative-reasoning">Alternative Reasoning</option>
                                   <option value="hypothesis-refinement">Refinement Suggestion</option>
+                                  {educationalMode && (
+                                    <>
+                                      <option value="competency-assessment">Competency Assessment</option>
+                                      <option value="learning-reflection">Learning Reflection</option>
+                                      <option value="educational-feedback">Educational Feedback</option>
+                                    </>
+                                  )}
                                 </select>
                               </div>
                               
-                              <div className="flex space-x-1">
+                              <div className="flex space-x-2">
                                 <input
                                   type="text"
-                                  placeholder="Provide evidence-based feedback on this hypothesis..."
-                                  className="flex-1 px-2 py-1 text-xs border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+                                  placeholder={educationalMode ? 
+                                    "Provide constructive educational feedback focusing on clinical reasoning and evidence integration..." : 
+                                    "Provide evidence-based feedback on this hypothesis..."
+                                  }
+                                  className="flex-1 px-3 py-2 text-xs border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white"
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter' && e.target.value.trim()) {
                                       const discussionType = e.target.parentElement.previousElementSibling.querySelector('select').value;
                                       onAddComment(hypothesis.Id, {
                                         text: e.target.value,
                                         type: discussionType,
-                                        category: 'hypothesis-discussion'
+                                        category: educationalMode ? 'educational-assessment' : 'hypothesis-discussion'
                                       });
                                       e.target.value = '';
                                     }
@@ -266,48 +328,67 @@ const CollaborativeHypothesisWorkspace = ({
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="p-1 h-6 w-6"
+                                  className="px-3 py-2 h-auto"
                                   onClick={(e) => {
-                                    const container = e.target.closest('.space-y-2');
+                                    const container = e.target.closest('.space-y-3');
                                     const input = container.querySelector('input');
                                     const select = container.querySelector('select');
                                     if (input.value.trim()) {
                                       onAddComment(hypothesis.Id, {
                                         text: input.value,
                                         type: select.value,
-                                        category: 'hypothesis-discussion'
+                                        category: educationalMode ? 'educational-assessment' : 'hypothesis-discussion'
                                       });
                                       input.value = '';
                                     }
                                   }}
                                 >
-                                  <ApperIcon name="Send" className="w-3 h-3" />
+                                  <ApperIcon name="Send" className="w-4 h-4" />
                                 </Button>
                               </div>
                               
-                              {/* Confidence Calibration Tool */}
-                              <div className="pt-2 border-t border-gray-200">
-                                <div className="text-xs text-gray-600 mb-1">
-                                  Rate your confidence in this hypothesis:
+                              {/* Enhanced Confidence Calibration with Educational Context */}
+                              <div className="pt-3 border-t border-gray-200">
+                                <div className="text-xs font-medium text-gray-700 mb-2">
+                                  {educationalMode ? "Educational Confidence Calibration & Peer Assessment:" : "Rate your confidence in this hypothesis:"}
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="grid grid-cols-5 gap-2">
                                   {[1, 2, 3, 4, 5].map((level) => (
                                     <button
                                       key={level}
-                                      className="w-6 h-6 rounded-full border-2 border-gray-300 text-xs hover:border-primary transition-colors"
+                                      className="flex flex-col items-center p-2 rounded-lg border-2 border-gray-300 hover:border-primary transition-colors bg-white"
                                       onClick={() => {
+                                        const educationalContext = educationalMode ? 
+                                          `Educational assessment - Confidence level ${level}/5. This reflects my current understanding of the clinical reasoning process and evidence integration.` :
+                                          `Confidence rating: ${level}/5`;
+                                        
                                         onAddComment(hypothesis.Id, {
-                                          text: `Confidence rating: ${level}/5`,
+                                          text: educationalContext,
                                           type: 'confidence-calibration',
                                           category: 'peer-calibration',
-                                          confidenceLevel: level
+                                          confidenceLevel: level,
+                                          educationalContext: educationalMode
                                         });
                                       }}
                                     >
-                                      {level}
+                                      <span className="text-lg font-bold text-primary">{level}</span>
+                                      <span className="text-xs text-gray-600">
+                                        {level === 1 && "Low"}
+                                        {level === 2 && "Developing"}
+                                        {level === 3 && "Moderate"}
+                                        {level === 4 && "High"}
+                                        {level === 5 && "Very High"}
+                                      </span>
                                     </button>
                                   ))}
                                 </div>
+                                
+                                {educationalMode && (
+                                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-800">
+                                    <ApperIcon name="Lightbulb" className="w-3 h-3 inline mr-1" />
+                                    <strong>Educational Tip:</strong> Consider your confidence in relation to available evidence, clinical experience, and peer perspectives. Confidence calibration is a key professional competency.
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>

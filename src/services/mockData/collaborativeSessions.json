@@ -9,7 +9,7 @@
       {
         "Id": 101,
         "text": "Lumbar disc herniation at L4-L5 level",
-        "rationale": "Patient presents with radiating leg pain consistent with nerve root compression",
+        "rationale": "Patient presents with radiating leg pain consistent with nerve root compression. The gradual onset following physical activity and the distribution of symptoms suggest mechanical compression of neural structures.",
         "familyId": 5,
         "confidence": 4,
         "isPrimary": true,
@@ -20,10 +20,22 @@
         "comments": [
           {
             "Id": 1,
-            "text": "Good hypothesis, but consider investigating red flags first",
+            "text": "Excellent clinical reasoning! Consider also investigating red flags systematically before proceeding with this hypothesis.",
+            "type": "evidence-support",
+            "category": "evidence-analysis",
             "authorId": "facilitator-1",
             "authorName": "Dr. Sarah Johnson",
             "createdAt": "2024-01-15T11:15:00Z"
+          },
+          {
+            "Id": 2,
+            "text": "I agree with the disc herniation possibility. Have you considered the specific dermatome distribution?",
+            "type": "hypothesis-refinement",
+            "category": "peer-calibration",
+            "confidenceLevel": 4,
+            "authorId": "student-3",
+            "authorName": "Alex Thompson",
+            "createdAt": "2024-01-15T11:25:00Z"
           }
         ],
         "createdAt": "2024-01-15T10:45:00Z"
@@ -31,7 +43,7 @@
       {
         "Id": 102,
         "text": "Mechanical low back pain due to poor posture",
-        "rationale": "Patient works at desk job and reports worsening pain with prolonged sitting",
+        "rationale": "Patient works at desk job and reports worsening pain with prolonged sitting. Ergonomic factors and sedentary lifestyle are significant contributing factors to the presentation.",
         "familyId": 3,
         "confidence": 3,
         "isPrimary": false,
@@ -39,34 +51,166 @@
         "authorName": "Michael Rodriguez",
         "phase": "individual",
         "status": "reviewed",
-        "comments": [],
+        "comments": [
+          {
+            "Id": 3,
+            "text": "This hypothesis demonstrates good understanding of occupational risk factors. Consider exploring the biomechanical aspects further.",
+            "type": "evidence-support",
+            "category": "evidence-analysis",
+            "authorId": "facilitator-1",
+            "authorName": "Dr. Sarah Johnson",
+            "createdAt": "2024-01-15T11:20:00Z"
+          }
+        ],
         "createdAt": "2024-01-15T10:50:00Z"
+      },
+      {
+        "Id": 103,
+        "text": "Stress-related myofascial pain syndrome",
+        "rationale": "Patient reports high stress levels from work deadlines and recent house move. Muscle tension patterns and stress correlation suggest psychosocial contributing factors.",
+        "familyId": 2,
+        "confidence": 3,
+        "isPrimary": false,
+        "authorId": "student-3",
+        "authorName": "Alex Thompson",
+        "phase": "individual",
+        "status": "pending-review",
+        "comments": [],
+        "createdAt": "2024-01-15T10:55:00Z"
       }
     ],
-    "discussions": [],
+    "discussions": [
+      {
+        "Id": 1001,
+        "title": "Evidence Integration Discussion",
+        "category": "evidence-analysis",
+        "stage": 2,
+        "authorId": "facilitator-1",
+        "authorName": "Dr. Sarah Johnson",
+        "messages": [],
+        "createdAt": "2024-01-15T11:30:00Z"
+      }
+    ],
+    "facilitatorMetrics": {
+      "participationEquity": 85,
+      "discussionDepth": 3,
+      "learningObjectiveAlignment": 72,
+      "interventionLog": [
+        {
+          "Id": 1,
+          "type": "engagement-prompt",
+          "context": {
+            "reason": "Encouraging deeper evidence analysis",
+            "targetStudents": ["student-2", "student-3"]
+          },
+          "timestamp": "2024-01-15T11:35:00Z",
+          "facilitatorId": "facilitator-1"
+        }
+      ],
+      "educationalAssessments": {
+        "hypothesisQuality": 75,
+        "evidenceIntegration": 68,
+        "peerCollaboration": 85,
+        "reflectivePractice": 60
+      },
+      "competencyTracking": {
+        "clinicalReasoning": 78,
+        "evidenceEvaluation": 65,
+        "peerCollaboration": 85,
+        "reflectivePractice": 60,
+        "criticalThinking": 70,
+        "professionalCommunication": 80
+      }
+    },
+    "educationalSession": {
+      "learningObjectives": [
+        "Develop systematic clinical reasoning skills",
+        "Integrate evidence-based practice principles",
+        "Demonstrate effective peer collaboration",
+        "Engage in reflective professional practice"
+      ],
+      "assessmentCriteria": {
+        "hypothesisQuality": { "weight": 0.25, "current": 75 },
+        "evidenceIntegration": { "weight": 0.25, "current": 68 },
+        "peerEngagement": { "weight": 0.25, "current": 85 },
+        "reflectiveInsight": { "weight": 0.25, "current": 60 }
+      },
+      "learningMilestones": [
+        {
+          "type": "phase_completion",
+          "phase": "individual",
+          "timestamp": "2024-01-15T11:00:00Z",
+          "metrics": {
+            "hypothesesGenerated": 3,
+            "averageRationaleLength": 85
+          }
+        }
+      ],
+      "educationalInterventions": [
+        {
+          "Id": 1,
+          "type": "engagement-prompt",
+          "context": {
+            "reason": "Encouraging deeper evidence analysis"
+          },
+          "timestamp": "2024-01-15T11:35:00Z",
+          "facilitatorId": "facilitator-1",
+          "educationalImpact": {
+            "participationBoost": 15,
+            "discussionDepthIncrease": 1
+          }
+        }
+      ],
+      "outcomeTracking": {
+        "individualProgress": {
+          "student-1": { "competencyScore": 82, "participationLevel": 90 },
+          "student-2": { "competencyScore": 75, "participationLevel": 80 },
+          "student-3": { "competencyScore": 78, "participationLevel": 85 }
+        },
+        "groupDynamics": {
+          "collaborationScore": 85,
+          "consensusBuildingAbility": 70,
+          "peerSupportLevel": 88
+        },
+        "competencyDevelopment": {
+          "overallProgress": 77,
+          "strengthAreas": ["peer_collaboration", "clinical_reasoning"],
+          "improvementAreas": ["reflective_practice", "evidence_integration"]
+        }
+      }
+    },
     "score": {
-      "diversity": 2,
-      "coverage": 20,
-      "reasoning": 16,
-      "collaboration": 45
+      "diversity": 3,
+      "coverage": 30,
+      "reasoning": 78,
+      "collaboration": 85,
+      "evidenceEngagement": 68,
+      "metacognition": 60,
+      "educationalAlignment": 72
     },
     "phaseSettings": {
       "individual": {
         "timeLimit": 20,
         "completed": true,
-        "completedAt": "2024-01-15T11:00:00Z"
+        "completedAt": "2024-01-15T11:00:00Z",
+        "educationalFocus": "Independent hypothesis generation and clinical reasoning development",
+        "assessmentCheckpoints": ["hypothesis_quality", "rationale_depth", "evidence_consideration"]
       },
       "peerReview": {
         "timeLimit": 15,
         "completed": false,
-        "startedAt": "2024-01-15T11:00:00Z"
+        "startedAt": "2024-01-15T11:00:00Z",
+        "educationalFocus": "Collaborative peer assessment and constructive feedback skills",
+        "assessmentCheckpoints": ["peer_engagement", "feedback_quality", "evidence_discussion"]
       },
       "synthesis": {
         "timeLimit": 25,
-        "completed": false
+        "completed": false,
+        "educationalFocus": "Group synthesis and consensus-building for professional practice",
+        "assessmentCheckpoints": ["group_synthesis", "consensus_building", "reflection_integration"]
       }
     },
-    "unreadComments": 1,
+    "unreadComments": 2,
     "createdAt": "2024-01-15T10:30:00Z"
   }
 ]

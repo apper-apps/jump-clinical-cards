@@ -10,51 +10,97 @@ let nextHypothesisId = 100;
 let nextCommentId = 1;
 let nextDiscussionId = 1000;
 const collaborativeService = {
-  async getSession(groupId) {
-    await delay(300);
-    
-    // Find or create session for group
+async getSession(groupId) {
+  await delay(300);
+  
+  // Find or create session for group
 let session = collaborativeSessionsData.find(s => s.groupId === parseInt(groupId));
+  
+  if (!session) {
+    // Create new session with comprehensive educational structure
+    session = {
+      Id: Date.now(),
+      groupId: parseInt(groupId),
+      caseId: 1,
+      currentPhase: "individual",
+      currentStage: 1,
+      hypotheses: [],
+      discussions: [],
+      discussionThreads: [],
+      facilitatorMetrics: {
+        participationEquity: 0,
+        discussionDepth: 0,
+        learningObjectiveAlignment: 0,
+        interventionLog: [],
+        educationalAssessments: {},
+        competencyTracking: {
+          clinicalReasoning: 0,
+          evidenceEvaluation: 0,
+          peerCollaboration: 0,
+          reflectivePractice: 0,
+          criticalThinking: 0,
+          professionalCommunication: 0
+        }
+      },
+      educationalSession: {
+        learningObjectives: [
+          "Develop systematic clinical reasoning skills",
+          "Integrate evidence-based practice principles",
+          "Demonstrate effective peer collaboration",
+          "Engage in reflective professional practice"
+        ],
+        assessmentCriteria: {
+          hypothesisQuality: { weight: 0.25, current: 0 },
+          evidenceIntegration: { weight: 0.25, current: 0 },
+          peerEngagement: { weight: 0.25, current: 0 },
+          reflectiveInsight: { weight: 0.25, current: 0 }
+        },
+        learningMilestones: [],
+        educationalInterventions: [],
+        outcomeTracking: {
+          individualProgress: {},
+          groupDynamics: {},
+          competencyDevelopment: {}
+        }
+      },
+      score: {
+        diversity: 0,
+        coverage: 0,
+        reasoning: 0,
+        collaboration: 0,
+        evidenceEngagement: 0,
+        metacognition: 0,
+        educationalAlignment: 0
+      },
+      phaseSettings: {
+        individual: { 
+          timeLimit: 20, 
+          completed: false,
+          educationalFocus: "Independent hypothesis generation and clinical reasoning development",
+          assessmentCheckpoints: ["hypothesis_quality", "rationale_depth", "evidence_consideration"]
+        },
+        peerReview: { 
+          timeLimit: 15, 
+          completed: false,
+          educationalFocus: "Collaborative peer assessment and constructive feedback skills",
+          assessmentCheckpoints: ["peer_engagement", "feedback_quality", "evidence_discussion"]
+        },
+        synthesis: { 
+          timeLimit: 25, 
+          completed: false,
+          educationalFocus: "Group synthesis and consensus-building for professional practice",
+          assessmentCheckpoints: ["group_synthesis", "consensus_building", "reflection_integration"]
+        }
+      },
+      unreadComments: 0,
+      createdAt: new Date().toISOString()
+    };
     
-    if (!session) {
-      // Create new session with enhanced discussion structure
-      session = {
-        Id: Date.now(),
-        groupId: parseInt(groupId),
-        caseId: 1,
-        currentPhase: "individual",
-        currentStage: 1,
-        hypotheses: [],
-        discussions: [],
-        discussionThreads: [],
-        facilitatorMetrics: {
-          participationEquity: 0,
-          discussionDepth: 0,
-          learningObjectiveAlignment: 0,
-          interventionLog: []
-        },
-        score: {
-          diversity: 0,
-          coverage: 0,
-          reasoning: 0,
-          collaboration: 0,
-          evidenceEngagement: 0,
-          metacognition: 0
-        },
-        phaseSettings: {
-          individual: { timeLimit: 20, completed: false },
-          peerReview: { timeLimit: 15, completed: false },
-          synthesis: { timeLimit: 25, completed: false }
-        },
-        unreadComments: 0,
-        createdAt: new Date().toISOString()
-      };
-      
-      collaborativeSessionsData.push(session);
-    }
+    collaborativeSessionsData.push(session);
+  }
 
-    return { ...session, hypotheses: [...session.hypotheses] };
-  },
+  return { ...session, hypotheses: [...session.hypotheses] };
+},
 
   async getGroup(groupId) {
     return await groupService.getGroup(groupId);
@@ -206,34 +252,133 @@ async addComment(groupId, hypothesisId, commentData) {
     return { ...thread };
   },
 
-  async updatePhase(groupId, newPhase) {
-    await delay(300);
+async updatePhase(groupId, newPhase) {
+  await delay(300);
+  
+  const session = collaborativeSessionsData.find(s => s.groupId === parseInt(groupId));
+  if (!session) {
+    throw new Error("Session not found");
+  }
+
+  const previousPhase = session.currentPhase;
+  session.currentPhase = newPhase;
+  session.phaseChangedAt = new Date().toISOString();
+
+  // Educational phase transition logic with assessment checkpoints
+  if (newPhase === "peer-review") {
+    // Mark individual phase as completed and update educational metrics
+    session.phaseSettings.individual.completed = true;
+    session.phaseSettings.individual.completedAt = new Date().toISOString();
     
-    const session = collaborativeSessionsData.find(s => s.groupId === parseInt(groupId));
-    if (!session) {
-      throw new Error("Session not found");
+    session.hypotheses.forEach(h => {
+      if (h.status === "draft") {
+        h.status = "pending-review";
+        h.submittedForReviewAt = new Date().toISOString();
+      }
+    });
+
+    // Log educational milestone completion
+    session.educationalSession.learningMilestones.push({
+      type: 'phase_completion',
+      phase: 'individual',
+      timestamp: new Date().toISOString(),
+      metrics: {
+        hypothesesGenerated: session.hypotheses.length,
+        averageRationaleLength: session.hypotheses.reduce((sum, h) => sum + (h.rationale?.length || 0), 0) / session.hypotheses.length
+      }
+    });
+  } else if (newPhase === "synthesis") {
+    // Mark peer review phase as completed
+    session.phaseSettings.peerReview.completed = true;
+    session.phaseSettings.peerReview.completedAt = new Date().toISOString();
+    
+    session.hypotheses.forEach(h => {
+      if (h.status === "pending-review") {
+        h.status = "reviewed";
+        h.reviewCompletedAt = new Date().toISOString();
+      }
+    });
+
+    // Log peer review completion metrics
+    const totalComments = session.hypotheses.reduce((sum, h) => sum + (h.comments?.length || 0), 0);
+    session.educationalSession.learningMilestones.push({
+      type: 'peer_review_completion',
+      phase: 'peer-review',
+      timestamp: new Date().toISOString(),
+      metrics: {
+        totalPeerComments: totalComments,
+        averageCommentsPerHypothesis: totalComments / session.hypotheses.length,
+        peerEngagementScore: Math.min(100, totalComments * 10)
+      }
+    });
+  }
+
+  // Update educational assessment scores based on phase transition
+  this._updateEducationalAssessment(session);
+
+  return { ...session };
+},
+
+async logIntervention(groupId, interventionData) {
+  await delay(100);
+  
+  const session = collaborativeSessionsData.find(s => s.groupId === parseInt(groupId));
+  if (!session) {
+    throw new Error("Session not found");
+  }
+
+  const intervention = {
+    Id: Date.now(),
+    ...interventionData,
+    timestamp: new Date().toISOString()
+  };
+
+  session.facilitatorMetrics.interventionLog.push(intervention);
+  session.educationalSession.educationalInterventions.push({
+    ...intervention,
+    educationalImpact: this._assessInterventionImpact(intervention, session)
+  });
+
+  return { ...intervention };
+},
+
+_updateEducationalAssessment(session) {
+  const hypotheses = session.hypotheses || [];
+  const discussions = session.discussions || [];
+  
+  // Calculate comprehensive educational metrics
+  const assessmentScores = {
+    hypothesisQuality: Math.min(100, hypotheses.filter(h => h.rationale?.length > 50).length * 25),
+    evidenceIntegration: Math.min(100, discussions.filter(d => d.category === 'evidence-analysis').length * 30),
+    peerEngagement: Math.min(100, hypotheses.reduce((sum, h) => sum + (h.comments?.length || 0), 0) * 5),
+    reflectiveInsight: Math.min(100, discussions.filter(d => d.category === 'reflection').length * 40)
+  };
+
+  // Update assessment criteria with current scores
+  Object.keys(session.educationalSession.assessmentCriteria).forEach(criterion => {
+    if (assessmentScores[criterion] !== undefined) {
+      session.educationalSession.assessmentCriteria[criterion].current = assessmentScores[criterion];
     }
+  });
 
-    session.currentPhase = newPhase;
-    session.phaseChangedAt = new Date().toISOString();
+  // Calculate overall educational alignment score
+  const weightedScore = Object.values(session.educationalSession.assessmentCriteria)
+    .reduce((sum, criteria) => sum + (criteria.current * criteria.weight), 0);
+  
+  session.score.educationalAlignment = Math.round(weightedScore);
+},
 
-    // Update hypothesis statuses based on phase
-    if (newPhase === "peer-review") {
-      session.hypotheses.forEach(h => {
-        if (h.status === "draft") {
-          h.status = "pending-review";
-        }
-      });
-    } else if (newPhase === "synthesis") {
-      session.hypotheses.forEach(h => {
-        if (h.status === "pending-review") {
-          h.status = "reviewed";
-        }
-      });
-    }
+_assessInterventionImpact(intervention, session) {
+  // Simple impact assessment based on intervention type
+  const impactMetrics = {
+    'engagement-prompt': { participationBoost: 15, discussionDepthIncrease: 1 },
+    'redirect-focus': { learningAlignmentBoost: 10, evidenceEngagementIncrease: 2 },
+    'phase-transition': { progressAcceleration: 20, competencyAdvancement: 5 },
+    'assessment-checkpoint': { outcomeValidation: 25, reflectionPrompting: 3 }
+  };
 
-    return { ...session };
-  },
+  return impactMetrics[intervention.type] || { generalSupport: 5 };
+},
 
 _updateCollaborativeScore(session) {
     const uniqueFamilies = new Set(session.hypotheses.map(h => h.familyId)).size;

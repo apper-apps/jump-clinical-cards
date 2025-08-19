@@ -136,15 +136,22 @@ const CaseStagePanel = ({
 
                 <div className="flex items-center space-x-3">
                   {/* Stage Completion Confirmation */}
-                  {!stageConfirmation[currentStage] && (
-                    <button
-                      onClick={() => onStageConfirmation?.(currentStage)}
-                      className="inline-flex items-center space-x-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-all duration-200"
-                    >
-                      <ApperIcon name="Check" className="w-4 h-4" />
-                      <span>Mark Complete</span>
-                    </button>
-                  )}
+{!stageConfirmation[currentStage] && (
+                  <button
+                    onClick={() => onStageConfirmation?.(currentStage, true)}
+                    className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-accent to-success text-white rounded-lg hover:from-accent/90 hover:to-success/90 transition-all duration-200 shadow-md"
+                  >
+                    <ApperIcon name="CheckCircle" className="w-4 h-4" />
+                    <span>Complete Educational Milestone</span>
+                  </button>
+                )}
+                
+                {stageConfirmation[currentStage] && (
+                  <div className="inline-flex items-center space-x-2 px-4 py-2 bg-success text-white rounded-lg">
+                    <ApperIcon name="CheckCircle" className="w-4 h-4" />
+                    <span>Learning Milestone Achieved</span>
+                  </div>
+                )}
                   
                   {/* Next Stage Button */}
                   {currentStage < stages.length && stageConfirmation[currentStage] && (

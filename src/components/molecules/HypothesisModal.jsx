@@ -13,11 +13,13 @@ const HypothesisModal = ({
   families = []
 }) => {
   const [formData, setFormData] = useState({
-    text: "",
-    rationale: "",
-    familyId: "",
-    confidence: 3,
-    isPrimary: false
+text: "",
+  rationale: "",
+  familyId: "",
+  confidence: 3,
+  isPrimary: false,
+  educationalFocus: "",
+  learningObjectives: []
   });
 
   const [errors, setErrors] = useState({});
