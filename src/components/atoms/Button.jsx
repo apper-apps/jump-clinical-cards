@@ -8,7 +8,7 @@ const Button = forwardRef(({
   size = "md", 
   children, 
   disabled = false,
-  isLoading = false,
+isLoading = false,
   ...props 
 }, ref) => {
   const variants = {
