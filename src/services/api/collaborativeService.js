@@ -279,9 +279,8 @@ _updateCollaborativeScore(session) {
       participationEquity,
       discussionDepth,
       learningObjectiveAlignment: Math.round(Math.random() * 40 + 60), // Mock calculation
-      interventionLog: session.facilitatorMetrics?.interventionLog || []
+interventionLog: session.facilitatorMetrics?.interventionLog || []
     };
-};
   }
 };
 

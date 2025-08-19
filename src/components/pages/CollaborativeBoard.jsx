@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCollaborativeSession } from "@/hooks/useCollaborativeSession";
 import { useFamilies } from "@/hooks/useFamilies";
 import { useCase } from "@/hooks/useCase";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import CollaborativeScoreDisplay from "@/components/molecules/CollaborativeScoreDisplay";
@@ -15,11 +13,14 @@ import GameBoardGrid from "@/components/organisms/GameBoardGrid";
 import CasePresentation from "@/components/organisms/CasePresentation";
 import CollaborativeHypothesisWorkspace from "@/components/organisms/CollaborativeHypothesisWorkspace";
 import DiscussionPanel from "@/components/organisms/DiscussionPanel";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
 
 const CollaborativeBoard = () => {
-const { groupId } = useParams();
+  const { groupId } = useParams();
   const navigate = useNavigate();
   const [currentStage, setCurrentStage] = useState(1);
+  const [currentPhase, setCurrentPhase] = useState("individual");
   const [stageConfirmation, setStageConfirmation] = useState({});
   const [discussionOpen, setDiscussionOpen] = useState(false);
   const [facilitatorDashboard, setFacilitatorDashboard] = useState({
@@ -27,11 +28,13 @@ const { groupId } = useParams();
     discussionDepth: 0,
     interventionNeeded: false
   });
-const {
+
+  const {
     session,
     group,
     loading: sessionLoading,
     error: sessionError,
+    setError: setSessionError,
     addHypothesis,
     updateHypothesis,
     deleteHypothesis,
@@ -58,7 +61,7 @@ const {
     loadCase
   } = useCase(1);
 
-  useEffect(() => {
+useEffect(() => {
     if (groupId) {
       loadCollaborativeSession();
     }
@@ -68,45 +71,38 @@ const {
     loadFamilies();
     loadCase();
   }, [loadFamilies, loadCase]);
+// Derived state
+  const loading = sessionLoading || familiesLoading || caseLoading;
+  const error = sessionError || familiesError || caseError;
+  const setError = setSessionError;
 
-  const handleStageChange = async (stageNumber) => {
-    try {
-      await unlockStage(stageNumber);
-      setCurrentStage(stageNumber);
-      toast.success(`Stage ${stageNumber} unlocked`);
-    } catch (error) {
-      toast.error("Failed to change stage");
-    }
+  // Handler functions
+  const handleLeaveGroup = () => {
+    navigate('/dashboard');
   };
 
-  const handleStageConfirmation = (stageNumber) => {
+  const handleStageChange = (stage) => {
+    setCurrentStage(stage);
+  };
+
+  const handleStageConfirmation = (stage, confirmed) => {
     setStageConfirmation(prev => ({
       ...prev,
-      [stageNumber]: true
+      [stage]: confirmed
     }));
   };
 
-  const handleLeaveGroup = () => {
-    navigate("/group");
-  };
+  // Determine current phase based on session state
+  useEffect(() => {
+    if (session?.phase) {
+      setCurrentPhase(session.phase);
+    }
+  }, [session?.phase]);
 
-  if (sessionLoading || familiesLoading || caseLoading) {
-    return <Loading message="Loading collaborative session..." />;
-  }
-
-  if (sessionError || familiesError || caseError) {
-    return (
-      <Error
-        title="Failed to load collaborative session"
-        message={sessionError || familiesError || caseError}
-        onRetry={loadCollaborativeSession}
-      />
-    );
-  }
-
-const currentPhase = session?.currentPhase || "individual";
-  const isParticipant = group?.participants?.some(p => p.userId === "current-user");
-  const isFacilitator = group?.facilitatorId === "current-user";
+  // Check if current user is facilitator (moved before useEffect)
+  const isFacilitator = group?.members?.some(member => 
+    member.Id === "current-user" && member.role === "facilitator"
+  );
 
   // Update facilitator dashboard metrics
   useEffect(() => {
@@ -124,6 +120,43 @@ const currentPhase = session?.currentPhase || "individual";
       }));
     }
   }, [session, group, isFacilitator, getFacilitatorMetrics]);
+
+  // Early returns should come after all hooks
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Error 
+          title="Failed to load collaborative session"
+          message={error}
+          onRetry={() => {
+            setError(null);
+            if (groupId) {
+              loadCollaborativeSession();
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (!session || !group) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
+
+const currentUser = group?.members?.find(member => member.Id === "current-user");
+  
   return (
     <div className="min-h-screen bg-background">
 {/* Enhanced Header with Facilitator Dashboard */}
