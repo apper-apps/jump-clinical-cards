@@ -17,13 +17,17 @@ import CollaborativeHypothesisWorkspace from "@/components/organisms/Collaborati
 import DiscussionPanel from "@/components/organisms/DiscussionPanel";
 
 const CollaborativeBoard = () => {
-  const { groupId } = useParams();
+const { groupId } = useParams();
   const navigate = useNavigate();
   const [currentStage, setCurrentStage] = useState(1);
   const [stageConfirmation, setStageConfirmation] = useState({});
   const [discussionOpen, setDiscussionOpen] = useState(false);
-
-  const {
+  const [facilitatorDashboard, setFacilitatorDashboard] = useState({
+    participationMetrics: {},
+    discussionDepth: 0,
+    interventionNeeded: false
+  });
+const {
     session,
     group,
     loading: sessionLoading,
@@ -34,6 +38,8 @@ const CollaborativeBoard = () => {
     moveHypothesis,
     submitForReview,
     addComment,
+    addDiscussionThread,
+    getFacilitatorMetrics,
     loadCollaborativeSession
   } = useCollaborativeSession(groupId);
 
@@ -98,13 +104,29 @@ const CollaborativeBoard = () => {
     );
   }
 
-  const currentPhase = session?.currentPhase || "individual";
+const currentPhase = session?.currentPhase || "individual";
   const isParticipant = group?.participants?.some(p => p.userId === "current-user");
   const isFacilitator = group?.facilitatorId === "current-user";
 
+  // Update facilitator dashboard metrics
+  useEffect(() => {
+    if (isFacilitator && session && group) {
+      const metrics = getFacilitatorMetrics?.() || {
+        participationEquity: 0,
+        discussionDepth: 0,
+        learningObjectiveAlignment: 0,
+        interventionSuggestions: []
+      };
+      setFacilitatorDashboard(prev => ({
+        ...prev,
+        ...metrics,
+        interventionNeeded: metrics.discussionDepth < 3 || metrics.participationEquity < 50
+      }));
+    }
+  }, [session, group, isFacilitator, getFacilitatorMetrics]);
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+{/* Enhanced Header with Facilitator Dashboard */}
       <motion.header
         className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40"
         initial={{ y: -20, opacity: 0 }}
@@ -125,15 +147,42 @@ const CollaborativeBoard = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  {group?.name || "Collaborative Session"}
+                  {group?.name || "Collaborative Reasoning Session"}
                 </h1>
                 <p className="text-sm text-gray-600">
-                  Clinical Reasoning - Group Learning Mode
+                  Evidence-Based Collaborative Learning Platform
                 </p>
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Facilitator Dashboard Metrics */}
+              {isFacilitator && (
+                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                  <div className="text-xs font-medium text-blue-800 mb-1">Facilitator Dashboard</div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="text-center">
+                      <div className="text-blue-600 font-semibold">
+                        {facilitatorDashboard.participationEquity || 0}%
+                      </div>
+                      <div className="text-blue-700">Participation Equity</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-blue-600 font-semibold">
+                        {facilitatorDashboard.discussionDepth || 0}/5
+                      </div>
+                      <div className="text-blue-700">Discussion Depth</div>
+                    </div>
+                  </div>
+                  {facilitatorDashboard.interventionNeeded && (
+                    <div className="mt-2 p-1 bg-yellow-100 rounded text-xs text-yellow-800">
+                      <ApperIcon name="AlertTriangle" className="w-3 h-3 inline mr-1" />
+                      Intervention Suggested
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Phase Indicator */}
               <div className="text-center">
                 <div className="text-sm text-gray-600">Current Phase</div>
@@ -152,7 +201,7 @@ const CollaborativeBoard = () => {
 
               {/* Participant Count */}
               <div className="text-center">
-                <div className="text-sm text-gray-600">Participants</div>
+                <div className="text-sm text-gray-600">Active Learners</div>
                 <div className="text-lg font-semibold text-primary">
                   {group?.participants?.length || 0}/{group?.maxParticipants || 5}
                 </div>
@@ -160,13 +209,13 @@ const CollaborativeBoard = () => {
 
               {/* Stage Indicator */}
               <div className="text-center">
-                <div className="text-sm text-gray-600">Current Stage</div>
+                <div className="text-sm text-gray-600">Case Stage</div>
                 <div className="text-lg font-semibold text-primary">
                   Stage {currentStage}
                 </div>
               </div>
 
-              {/* Discussion Toggle */}
+              {/* Enhanced Discussion Toggle */}
               <Button
                 variant={discussionOpen ? "default" : "outline"}
                 onClick={() => setDiscussionOpen(!discussionOpen)}
@@ -185,6 +234,28 @@ const CollaborativeBoard = () => {
               </Button>
             </div>
           </div>
+
+          {/* Facilitator Intervention Bar */}
+          {isFacilitator && facilitatorDashboard.interventionNeeded && (
+            <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <ApperIcon name="MessageCircle" className="w-4 h-4 text-yellow-600" />
+                  <span className="text-sm text-yellow-800">
+                    Consider guiding discussion or encouraging participation
+                  </span>
+                </div>
+                <div className="flex space-x-2">
+                  <Button size="sm" variant="outline" className="text-xs">
+                    Send Prompt
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-xs">
+                    Redirect Focus
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </motion.header>
 
@@ -224,10 +295,12 @@ const CollaborativeBoard = () => {
             {/* Discussion Panel */}
             {discussionOpen && (
               <div className="xl:col-span-1">
-                <DiscussionPanel
+<DiscussionPanel
                   session={session}
                   group={group}
+                  currentStage={currentStage}
                   onAddComment={addComment}
+                  onAddDiscussionThread={addDiscussionThread}
                   onClose={() => setDiscussionOpen(false)}
                 />
               </div>
@@ -235,16 +308,19 @@ const CollaborativeBoard = () => {
           </div>
 
           {/* Collaborative Hypothesis Workspace */}
-          <CollaborativeHypothesisWorkspace
+<CollaborativeHypothesisWorkspace
             hypotheses={session?.hypotheses || []}
             families={families}
             group={group}
             currentPhase={currentPhase}
+            currentStage={currentStage}
             onAddHypothesis={addHypothesis}
             onUpdateHypothesis={updateHypothesis}
             onDeleteHypothesis={deleteHypothesis}
             onSubmitForReview={submitForReview}
             onAddComment={addComment}
+            onAddDiscussionThread={addDiscussionThread}
+            showDiscussionMetrics={true}
           />
         </div>
       </main>

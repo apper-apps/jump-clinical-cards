@@ -148,18 +148,28 @@ export const useCollaborativeSession = (groupId) => {
     }
   };
 
-  const addComment = async (hypothesisId, commentText) => {
+const addComment = async (hypothesisId, commentData) => {
     if (!session || !group) return;
 
     try {
+      // Handle both string and object comment data
+      const commentPayload = typeof commentData === 'string' 
+        ? {
+            text: commentData,
+            authorId: "current-user",
+            authorName: "Current User",
+            category: "general"
+          }
+        : {
+            ...commentData,
+            authorId: commentData.authorId || "current-user",
+            authorName: commentData.authorName || "Current User"
+          };
+
       const comment = await collaborativeService.addComment(
         group.Id,
         hypothesisId,
-        {
-          text: commentText,
-          authorId: "current-user",
-          authorName: "Current User"
-        }
+        commentPayload
       );
 
       setSession(prev => ({
@@ -180,6 +190,73 @@ export const useCollaborativeSession = (groupId) => {
       toast.error("Failed to add comment");
       throw err;
     }
+  };
+const addDiscussionThread = async (discussionData) => {
+    if (!session || !group) return;
+
+    try {
+      const thread = await collaborativeService.addDiscussionThread(
+        group.Id,
+        {
+          ...discussionData,
+          authorId: "current-user",
+          authorName: "Current User"
+        }
+      );
+
+      setSession(prev => ({
+        ...prev,
+        discussions: [...(prev.discussions || []), thread]
+      }));
+
+      toast.success("Discussion thread added successfully");
+    } catch (error) {
+      toast.error("Failed to add discussion thread");
+      console.error("Error adding discussion thread:", error);
+    }
+  };
+
+  const getFacilitatorMetrics = () => {
+    if (!session || !group) return null;
+
+    const participants = group.participants || [];
+    const hypotheses = session.hypotheses || [];
+    const discussions = session.discussions || [];
+
+    // Calculate participation equity
+    const participantContributions = {};
+    participants.forEach(p => {
+      participantContributions[p.userId] = 0;
+    });
+
+    hypotheses.forEach(h => {
+      if (participantContributions.hasOwnProperty(h.authorId)) {
+        participantContributions[h.authorId]++;
+      }
+    });
+
+    discussions.forEach(d => {
+      if (participantContributions.hasOwnProperty(d.authorId)) {
+        participantContributions[d.authorId]++;
+      }
+    });
+
+    const contributions = Object.values(participantContributions);
+    const avgContribution = contributions.reduce((a, b) => a + b, 0) / contributions.length;
+    const maxContribution = Math.max(...contributions);
+    const participationEquity = maxContribution > 0 ? Math.round((avgContribution / maxContribution) * 100) : 0;
+
+    // Calculate discussion depth
+    const evidenceDiscussions = discussions.filter(d => d.category === 'evidence-analysis').length;
+    const totalComments = hypotheses.reduce((sum, h) => sum + (h.comments?.length || 0), 0);
+    const discussionDepth = Math.min(5, Math.round((evidenceDiscussions + totalComments) / 5));
+
+    return {
+      participationEquity,
+      discussionDepth,
+      learningObjectiveAlignment: Math.round(Math.random() * 40 + 60), // Mock value
+      interventionSuggestions: participationEquity < 50 ? ['Encourage quiet participants', 'Guide discussion focus'] : []
+    };
   };
 
   useEffect(() => {

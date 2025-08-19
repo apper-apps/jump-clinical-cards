@@ -13,11 +13,13 @@ const CollaborativeHypothesisWorkspace = ({
   families = [],
   group = {},
   currentPhase = "individual",
+  currentStage = 1,
   onAddHypothesis,
   onUpdateHypothesis,
   onDeleteHypothesis,
   onSubmitForReview,
   onAddComment,
+  onAddDiscussionThread,
   className 
 }) => {
   const [editingHypothesis, setEditingHypothesis] = useState(null);
@@ -215,33 +217,98 @@ const CollaborativeHypothesisWorkspace = ({
                         
                         {/* Comment Section for Peer Review */}
                         {currentPhase === "peer-review" && (
-                          <div className="mt-2 p-2 bg-gray-50 rounded border">
-                            <div className="flex space-x-1">
-                              <input
-                                type="text"
-                                placeholder="Add feedback or suggestion..."
-                                className="flex-1 px-2 py-1 text-xs border rounded focus:outline-none focus:ring-1 focus:ring-primary"
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' && e.target.value.trim()) {
-                                    onAddComment(hypothesis.Id, e.target.value);
-                                    e.target.value = '';
-                                  }
-                                }}
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="p-1 h-6 w-6"
-                                onClick={(e) => {
-                                  const input = e.target.closest('.mt-2').querySelector('input');
-                                  if (input.value.trim()) {
-                                    onAddComment(hypothesis.Id, input.value);
-                                    input.value = '';
-                                  }
-                                }}
-                              >
-                                <ApperIcon name="Send" className="w-3 h-3" />
-                              </Button>
+<div className="mt-2 p-3 bg-gray-50 rounded-lg border">
+                            <div className="mb-2">
+                              <h5 className="text-xs font-medium text-gray-700 mb-1">
+                                Hypothesis Discussion Thread
+                              </h5>
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                <Badge variant="outline" size="xs" className="text-blue-600 border-blue-200">
+                                  Evidence Evaluation
+                                </Badge>
+                                <Badge variant="outline" size="xs" className="text-green-600 border-green-200">
+                                  Clinical Reasoning
+                                </Badge>
+                                <Badge variant="outline" size="xs" className="text-purple-600 border-purple-200">
+                                  Alternative Perspective
+                                </Badge>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <div className="flex space-x-1">
+                                <select className="text-xs border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary">
+                                  <option value="evidence-support">Support with Evidence</option>
+                                  <option value="evidence-challenge">Challenge with Evidence</option>
+                                  <option value="confidence-calibration">Confidence Discussion</option>
+                                  <option value="alternative-reasoning">Alternative Reasoning</option>
+                                  <option value="hypothesis-refinement">Refinement Suggestion</option>
+                                </select>
+                              </div>
+                              
+                              <div className="flex space-x-1">
+                                <input
+                                  type="text"
+                                  placeholder="Provide evidence-based feedback on this hypothesis..."
+                                  className="flex-1 px-2 py-1 text-xs border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && e.target.value.trim()) {
+                                      const discussionType = e.target.parentElement.previousElementSibling.querySelector('select').value;
+                                      onAddComment(hypothesis.Id, {
+                                        text: e.target.value,
+                                        type: discussionType,
+                                        category: 'hypothesis-discussion'
+                                      });
+                                      e.target.value = '';
+                                    }
+                                  }}
+                                />
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="p-1 h-6 w-6"
+                                  onClick={(e) => {
+                                    const container = e.target.closest('.space-y-2');
+                                    const input = container.querySelector('input');
+                                    const select = container.querySelector('select');
+                                    if (input.value.trim()) {
+                                      onAddComment(hypothesis.Id, {
+                                        text: input.value,
+                                        type: select.value,
+                                        category: 'hypothesis-discussion'
+                                      });
+                                      input.value = '';
+                                    }
+                                  }}
+                                >
+                                  <ApperIcon name="Send" className="w-3 h-3" />
+                                </Button>
+                              </div>
+                              
+                              {/* Confidence Calibration Tool */}
+                              <div className="pt-2 border-t border-gray-200">
+                                <div className="text-xs text-gray-600 mb-1">
+                                  Rate your confidence in this hypothesis:
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  {[1, 2, 3, 4, 5].map((level) => (
+                                    <button
+                                      key={level}
+                                      className="w-6 h-6 rounded-full border-2 border-gray-300 text-xs hover:border-primary transition-colors"
+                                      onClick={() => {
+                                        onAddComment(hypothesis.Id, {
+                                          text: `Confidence rating: ${level}/5`,
+                                          type: 'confidence-calibration',
+                                          category: 'peer-calibration',
+                                          confidenceLevel: level
+                                        });
+                                      }}
+                                    >
+                                      {level}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         )}
