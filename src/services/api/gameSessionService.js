@@ -1,4 +1,6 @@
 import gameSessionsData from "@/services/mockData/gameSessions.json";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -87,14 +89,57 @@ export const gameSessionService = {
       throw new Error("Session not found");
     }
 
-    session.currentStage = stageNumber;
+session.currentStage = stageNumber;
     return { ...session };
   },
+async submitHypothesisForReview(sessionId, hypothesisId) {
+await delay(200);
+const session = gameSessionsData.find(s => s.Id === parseInt(sessionId));
+if (!session) {
+throw new Error("Session not found");
+}
 
-  _updateScore(session) {
+const hypothesisIndex = session.hypotheses.findIndex(h => h.Id === parseInt(hypothesisId));
+if (hypothesisIndex === -1) {
+throw new Error("Hypothesis not found");
+}
+
+session.hypotheses[hypothesisIndex].status = "pending-review";
+session.hypotheses[hypothesisIndex].submittedAt = new Date().toISOString();
+
+return { ...session.hypotheses[hypothesisIndex] };
+},
+
+async addHypothesisComment(sessionId, hypothesisId, commentText) {
+await delay(150);
+const session = gameSessionsData.find(s => s.Id === parseInt(sessionId));
+if (!session) {
+throw new Error("Session not found");
+}
+
+const hypothesisIndex = session.hypotheses.findIndex(h => h.Id === parseInt(hypothesisId));
+if (hypothesisIndex === -1) {
+throw new Error("Hypothesis not found");
+}
+
+const comment = {
+Id: Date.now(),
+text: commentText,
+authorId: "current-user",
+authorName: "Current User",
+createdAt: new Date().toISOString()
+};
+
+session.hypotheses[hypothesisIndex].comments = session.hypotheses[hypothesisIndex].comments || [];
+session.hypotheses[hypothesisIndex].comments.push(comment);
+
+return { ...comment };
+},
+
+_updateScore(session) {
     const uniqueFamilies = new Set(session.hypotheses.map(h => h.familyId)).size;
     const totalFamilies = 10; // Based on our family categories
-    
+
     session.score = {
       diversity: uniqueFamilies,
       coverage: Math.round((uniqueFamilies / totalFamilies) * 100),

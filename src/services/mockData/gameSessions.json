@@ -1,13 +1,15 @@
 [
-  {
-    "Id": 1,
-    "caseId": 1,
-    "hypotheses": [],
-    "currentStage": 1,
-    "score": {
-      "diversity": 0,
-      "coverage": 0,
-      "reasoning": 0
-    }
-  }
+{
+"Id": 1,
+"caseId": 1,
+"hypotheses": [],
+"currentStage": 1,
+"isCollaborative": false,
+"groupId": null,
+"score": {
+"diversity": 0,
+"coverage": 0,
+"reasoning": 0
+}
+}
 ]

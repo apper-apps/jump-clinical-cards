@@ -1,15 +1,17 @@
 import { motion } from "framer-motion";
+import React from "react";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import { cn } from "@/utils/cn";
 
 const HypothesisCard = ({ 
-  hypothesis, 
-  family,
-  onEdit,
-  onDelete,
-  isDragging = false,
-  className 
+hypothesis, 
+family,
+onEdit,
+onDelete,
+isDragging = false,
+showCollaborativeInfo = false,
+className 
 }) => {
   const handleDragStart = (e) => {
     e.dataTransfer.setData("hypothesisId", hypothesis.Id.toString());
@@ -31,17 +33,25 @@ const HypothesisCard = ({
         borderTopColor: family?.color || "#94A3B8"
       }}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <h4 className="font-semibold text-gray-900 mb-1">
-            {hypothesis.text}
-          </h4>
-          {hypothesis.rationale && (
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {hypothesis.rationale}
-            </p>
-          )}
-        </div>
+<div className="flex items-start justify-between mb-3">
+<div className="flex-1">
+<div className="flex items-start justify-between">
+<h4 className="font-semibold text-gray-900 mb-1">
+{hypothesis.text}
+</h4>
+{showCollaborativeInfo && hypothesis.authorName && (
+<div className="text-xs text-gray-500 ml-2 flex items-center space-x-1">
+<ApperIcon name="User" className="w-3 h-3" />
+<span>{hypothesis.authorName}</span>
+</div>
+)}
+</div>
+{hypothesis.rationale && (
+<p className="text-sm text-gray-600 leading-relaxed">
+{hypothesis.rationale}
+</p>
+)}
+</div>
         
         <div className="flex items-center space-x-1 ml-3">
           <Button
@@ -74,26 +84,50 @@ const HypothesisCard = ({
               <span>{family.name}</span>
             </span>
           )}
-        </div>
-        
-        <div className="flex items-center space-x-1">
-          <span>Confidence:</span>
-          <div className="flex space-x-1">
-            {[1, 2, 3, 4, 5].map((level) => (
-              <div
-                key={level}
-                className={cn(
-                  "w-2 h-2 rounded-full",
-                  level <= (hypothesis.confidence || 3)
-                    ? "bg-accent"
-                    : "bg-gray-200"
-                )}
-              />
-            ))}
-          </div>
-        </div>
+</div>
+
+{hypothesis.confidence && (
+<div className="flex items-center text-xs text-gray-500">
+<ApperIcon name="TrendingUp" className="w-3 h-3 mr-1" />
+<span>Confidence: {hypothesis.confidence}/5</span>
+</div>
+)}
+
+{/* Collaborative Status */}
+{showCollaborativeInfo && hypothesis.status && (
+<div className="flex items-center text-xs">
+{hypothesis.status === "pending-review" && (
+<span className="inline-flex items-center px-2 py-1 rounded-full bg-warning/10 text-warning">
+<ApperIcon name="Clock" className="w-3 h-3 mr-1" />
+Pending Review
+</span>
+)}
+{hypothesis.status === "reviewed" && (
+<span className="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success">
+<ApperIcon name="CheckCircle" className="w-3 h-3 mr-1" />
+Reviewed
+</span>
+)}
+</div>
+)}
+
+{/* Comments Section */}
+{hypothesis.comments && hypothesis.comments.length > 0 && (
+<div className="mt-2 pt-2 border-t border-gray-100">
+<div className="text-xs text-gray-500 mb-1">
+{hypothesis.comments.length} comment{hypothesis.comments.length !== 1 ? 's' : ''}
+</div>
+<div className="space-y-1 max-h-20 overflow-y-auto">
+{hypothesis.comments.slice(-2).map((comment, index) => (
+<div key={index} className="text-xs bg-gray-50 rounded p-1">
+<span className="font-medium text-gray-700">{comment.authorName}:</span>
+<span className="text-gray-600 ml-1">{comment.text}</span>
+</div>
+))}
+</div>
+</div>
+)}
       </div>
-      
       {hypothesis.isPrimary && (
         <div className="absolute top-2 right-2">
           <ApperIcon 

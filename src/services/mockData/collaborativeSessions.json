@@ -1,0 +1,72 @@
+[
+  {
+    "Id": 1001,
+    "groupId": 1,
+    "caseId": 1,
+    "currentPhase": "peer-review",
+    "currentStage": 2,
+    "hypotheses": [
+      {
+        "Id": 101,
+        "text": "Lumbar disc herniation at L4-L5 level",
+        "rationale": "Patient presents with radiating leg pain consistent with nerve root compression",
+        "familyId": 5,
+        "confidence": 4,
+        "isPrimary": true,
+        "authorId": "student-1",
+        "authorName": "Emily Chen",
+        "phase": "individual",
+        "status": "pending-review",
+        "comments": [
+          {
+            "Id": 1,
+            "text": "Good hypothesis, but consider investigating red flags first",
+            "authorId": "facilitator-1",
+            "authorName": "Dr. Sarah Johnson",
+            "createdAt": "2024-01-15T11:15:00Z"
+          }
+        ],
+        "createdAt": "2024-01-15T10:45:00Z"
+      },
+      {
+        "Id": 102,
+        "text": "Mechanical low back pain due to poor posture",
+        "rationale": "Patient works at desk job and reports worsening pain with prolonged sitting",
+        "familyId": 3,
+        "confidence": 3,
+        "isPrimary": false,
+        "authorId": "student-2",
+        "authorName": "Michael Rodriguez",
+        "phase": "individual",
+        "status": "reviewed",
+        "comments": [],
+        "createdAt": "2024-01-15T10:50:00Z"
+      }
+    ],
+    "discussions": [],
+    "score": {
+      "diversity": 2,
+      "coverage": 20,
+      "reasoning": 16,
+      "collaboration": 45
+    },
+    "phaseSettings": {
+      "individual": {
+        "timeLimit": 20,
+        "completed": true,
+        "completedAt": "2024-01-15T11:00:00Z"
+      },
+      "peerReview": {
+        "timeLimit": 15,
+        "completed": false,
+        "startedAt": "2024-01-15T11:00:00Z"
+      },
+      "synthesis": {
+        "timeLimit": 25,
+        "completed": false
+      }
+    },
+    "unreadComments": 1,
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+]

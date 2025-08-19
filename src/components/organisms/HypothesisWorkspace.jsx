@@ -63,31 +63,36 @@ const HypothesisWorkspace = ({
   const unassignedHypotheses = hypotheses.filter(h => !h.familyId);
   const assignedHypotheses = hypotheses.filter(h => h.familyId);
 
-  return (
-    <div className={className}>
-      <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <ApperIcon name="FileText" className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold text-gray-900">
-                Hypothesis Workspace
-              </h3>
-              <div className="text-sm text-gray-500">
-                ({hypotheses.length} total)
-              </div>
-            </div>
-            
-            <Button
-              onClick={handleCreateNew}
-              className="bg-gradient-to-r from-primary to-secondary text-white"
-              size="sm"
-            >
-              <ApperIcon name="Plus" className="w-4 h-4 mr-2" />
-              New Hypothesis
-            </Button>
-          </div>
-        </div>
+return (
+<div className={className}>
+<div className="bg-white rounded-lg shadow-sm border">
+<div className="p-4 border-b border-gray-200">
+<div className="flex items-center justify-between">
+<div className="flex items-center space-x-2">
+<ApperIcon name="FileText" className="w-5 h-5 text-primary" />
+<h3 className="font-semibold text-gray-900">
+Hypothesis Workspace
+</h3>
+<div className="text-sm text-gray-500">
+({hypotheses.length} total)
+</div>
+{hypotheses.some(h => h.authorId && h.authorId !== "current-user") && (
+<div className="text-xs text-info bg-info/10 px-2 py-1 rounded-full">
+Collaborative
+</div>
+)}
+</div>
+
+<Button
+onClick={handleCreateNew}
+className="bg-gradient-to-r from-primary to-secondary text-white"
+size="sm"
+>
+<ApperIcon name="Plus" className="w-4 h-4 mr-2" />
+New Hypothesis
+</Button>
+</div>
+</div>
 
         <div className="p-4">
           {hypotheses.length === 0 ? (
@@ -147,11 +152,61 @@ const HypothesisWorkspace = ({
                       </motion.div>
                     ))}
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+</div>
+)}
+
+{/* Peer Review Section for Collaborative Mode */}
+{hypotheses.some(h => h.status === "pending-review") && (
+<div>
+<h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center space-x-2">
+<ApperIcon name="Eye" className="w-4 h-4 text-warning" />
+<span>Pending Review ({hypotheses.filter(h => h.status === "pending-review").length})</span>
+</h4>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+{hypotheses
+.filter(h => h.status === "pending-review")
+.map((hypothesis) => (
+<motion.div
+key={hypothesis.Id}
+initial={{ opacity: 0, y: 10 }}
+animate={{ opacity: 1, y: 0 }}
+className="relative"
+>
+<HypothesisCard
+hypothesis={hypothesis}
+family={getFamilyForHypothesis(hypothesis.familyId)}
+onEdit={handleEdit}
+onDelete={handleDelete}
+showCollaborativeInfo={true}
+/>
+{hypothesis.authorId !== "current-user" && (
+<div className="mt-2 p-2 bg-gray-50 rounded border">
+<div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+<span>Add your review:</span>
+</div>
+<div className="flex space-x-1">
+<input
+type="text"
+placeholder="Add a comment or suggestion..."
+className="flex-1 px-2 py-1 text-xs border rounded"
+onKeyDown={(e) => {
+if (e.key === 'Enter' && e.target.value.trim()) {
+// Handle comment submission
+e.target.value = '';
+}
+}}
+/>
+</div>
+</div>
+)}
+</motion.div>
+))}
+</div>
+</div>
+)}
+</div>
+)}
+</div>
       </div>
 
       <HypothesisModal

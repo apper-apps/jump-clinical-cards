@@ -87,33 +87,50 @@ const handleStageChange = async (stageNumber) => {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <ApperIcon name="Stethoscope" className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  ClinicalCards
-                </h1>
-                <p className="text-sm text-gray-600">
-                  Clinical Reasoning Game for Physiotherapy Students
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <div className="text-sm text-gray-600">Current Stage</div>
-                <div className="text-lg font-semibold text-primary">
-                  Stage {currentStage}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.header>
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div className="flex items-center justify-between">
+<div className="flex items-center space-x-3">
+<div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+<ApperIcon name="Stethoscope" className="w-6 h-6 text-white" />
+</div>
+<div>
+<h1 className="text-2xl font-bold text-gray-900">
+ClinicalCards
+</h1>
+<p className="text-sm text-gray-600">
+Clinical Reasoning Game for Physiotherapy Students
+</p>
+</div>
+</div>
+
+<div className="flex items-center space-x-4">
+{/* Learning Mode Toggle */}
+<div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+<button
+className="px-3 py-2 rounded-md text-sm font-medium transition-colors bg-white text-primary shadow-sm"
+>
+<ApperIcon name="User" className="w-4 h-4 mr-2 inline" />
+Individual
+</button>
+<button
+onClick={() => window.location.href = '/group'}
+className="px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-primary hover:bg-white/50"
+>
+<ApperIcon name="Users" className="w-4 h-4 mr-2 inline" />
+Collaborative
+</button>
+</div>
+
+<div className="text-right">
+<div className="text-sm text-gray-600">Current Stage</div>
+<div className="text-lg font-semibold text-primary">
+Stage {currentStage}
+</div>
+</div>
+</div>
+</div>
+</div>
+</motion.header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

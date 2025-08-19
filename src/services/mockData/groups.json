@@ -1,0 +1,67 @@
+[
+  {
+    "Id": 1,
+    "name": "Physiotherapy Team Alpha",
+    "caseId": 1,
+    "caseName": "Lower Back Pain Assessment",
+    "maxParticipants": 4,
+    "facilitatorId": "facilitator-1",
+    "facilitatorName": "Dr. Sarah Johnson",
+    "participants": [
+      {
+        "Id": 1,
+        "userId": "facilitator-1",
+        "userName": "Dr. Sarah Johnson",
+        "role": "facilitator",
+        "joinedAt": "2024-01-15T10:30:00Z"
+      },
+      {
+        "Id": 2,
+        "userId": "student-1",
+        "userName": "Emily Chen",
+        "role": "learner",
+        "joinedAt": "2024-01-15T10:32:00Z"
+      },
+      {
+        "Id": 3,
+        "userId": "student-2",
+        "userName": "Michael Rodriguez",
+        "role": "learner",
+        "joinedAt": "2024-01-15T10:35:00Z"
+      }
+    ],
+    "status": "active",
+    "currentStage": 2,
+    "currentPhase": "peer-review",
+    "createdAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Clinical Reasoning Group B",
+    "caseId": 1,
+    "caseName": "Lower Back Pain Assessment",
+    "maxParticipants": 5,
+    "facilitatorId": "facilitator-2",
+    "facilitatorName": "Prof. James Wilson",
+    "participants": [
+      {
+        "Id": 4,
+        "userId": "facilitator-2",
+        "userName": "Prof. James Wilson",
+        "role": "facilitator",
+        "joinedAt": "2024-01-15T09:00:00Z"
+      },
+      {
+        "Id": 5,
+        "userId": "student-3",
+        "userName": "Anna Thompson",
+        "role": "learner",
+        "joinedAt": "2024-01-15T09:05:00Z"
+      }
+    ],
+    "status": "waiting",
+    "currentStage": 1,
+    "currentPhase": "individual",
+    "createdAt": "2024-01-15T09:00:00Z"
+  }
+]

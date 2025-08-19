@@ -102,24 +102,75 @@ export const useGameSession = () => {
     } catch (err) {
       throw new Error("Failed to move hypothesis");
     }
-  };
+};
 
 const updateCurrentStage = async (stageNumber) => {
-    if (!session) return;
+if (!session) return;
 
-    try {
-      const updatedSession = await gameSessionService.updateCurrentStage(
-        session.Id, 
-        stageNumber
-      );
-      
-      setSession(updatedSession);
-      return updatedSession;
-    } catch (err) {
-      setError("Failed to update stage");
-      throw new Error("Failed to update stage");
-    }
-  };
+try {
+const updatedSession = await gameSessionService.updateCurrentStage(
+session.Id, 
+stageNumber
+);
+
+setSession(updatedSession);
+return updatedSession;
+} catch (err) {
+setError("Failed to update stage");
+throw new Error("Failed to update stage");
+}
+};
+
+const submitForReview = async (hypothesisId) => {
+if (!session) return;
+
+try {
+const updatedHypothesis = await gameSessionService.submitHypothesisForReview(
+session.Id,
+hypothesisId
+);
+
+setSession(prev => ({
+...prev,
+hypotheses: prev.hypotheses.map(h =>
+h.Id === hypothesisId ? updatedHypothesis : h
+)
+}));
+
+return updatedHypothesis;
+} catch (err) {
+throw new Error("Failed to submit hypothesis for review");
+}
+};
+
+const addComment = async (hypothesisId, commentText) => {
+if (!session) return;
+
+try {
+const comment = await gameSessionService.addHypothesisComment(
+session.Id,
+hypothesisId,
+commentText
+);
+
+// Update the hypothesis with the new comment
+setSession(prev => ({
+...prev,
+hypotheses: prev.hypotheses.map(h =>
+h.Id === hypothesisId 
+? {
+  ...h,
+  comments: [...(h.comments || []), comment]
+}
+: h
+)
+}));
+
+return comment;
+} catch (err) {
+throw new Error("Failed to add comment");
+}
+};
 
   return {
     session,
