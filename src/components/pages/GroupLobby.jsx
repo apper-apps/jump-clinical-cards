@@ -162,9 +162,9 @@ const GroupLobby = () => {
                   >
                     Cancel
                   </Button>
-                  <Button
+<Button
                     type="submit"
-                    loading={creating}
+                    isLoading={creating}
                     className="bg-primary text-white"
                   >
                     Create Group
@@ -264,9 +264,9 @@ const GroupLobby = () => {
                       </div>
 
                       <div className="mt-6">
-                        <Button
+<Button
                           onClick={() => handleJoinGroup(group.Id)}
-                          loading={joining === group.Id}
+                          isLoading={joining === group.Id}
                           disabled={
                             group.participants?.length >= group.maxParticipants ||
                             group.status === "completed"
