@@ -1,18 +1,19 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import ApperIcon from "@/components/ApperIcon";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import CasePresentation from "@/components/organisms/CasePresentation";
-import GameBoardGrid from "@/components/organisms/GameBoardGrid";
-import HypothesisWorkspace from "@/components/organisms/HypothesisWorkspace";
-import ScoreDisplay from "@/components/molecules/ScoreDisplay";
 import { useGameSession } from "@/hooks/useGameSession";
 import { useFamilies } from "@/hooks/useFamilies";
 import { useCase } from "@/hooks/useCase";
+import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import ScoreDisplay from "@/components/molecules/ScoreDisplay";
+import GameBoardGrid from "@/components/organisms/GameBoardGrid";
+import CasePresentation from "@/components/organisms/CasePresentation";
+import HypothesisWorkspace from "@/components/organisms/HypothesisWorkspace";
 
 const GameBoard = () => {
-  const [currentStage, setCurrentStage] = useState(1);
+const [currentStage, setCurrentStage] = useState(1);
+  const [stageConfirmation, setStageConfirmation] = useState({});
   
   const { 
     session, 
@@ -43,9 +44,20 @@ const GameBoard = () => {
   const isLoading = sessionLoading || familiesLoading || caseLoading;
   const hasError = sessionError || familiesError || caseError;
 
-  const handleStageChange = (stageNumber) => {
-    setCurrentStage(stageNumber);
-    unlockStage(stageNumber);
+const handleStageChange = async (stageNumber) => {
+    try {
+      setCurrentStage(stageNumber);
+      unlockStage(stageNumber);
+    } catch (error) {
+      console.error('Failed to update stage:', error);
+    }
+  };
+
+  const handleStageConfirmation = (stageNumber) => {
+    setStageConfirmation(prev => ({
+      ...prev,
+      [stageNumber]: true
+    }));
   };
 
   const handleRetry = () => {
@@ -116,10 +128,12 @@ const GameBoard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Case Information Panel */}
             <div className="lg:col-span-1">
-              <CasePresentation
+<CasePresentation
                 caseData={caseData}
                 currentStage={currentStage}
                 onStageChange={handleStageChange}
+                stageConfirmation={stageConfirmation}
+                onStageConfirmation={handleStageConfirmation}
               />
             </div>
 

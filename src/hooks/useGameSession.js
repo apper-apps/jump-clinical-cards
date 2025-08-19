@@ -104,7 +104,7 @@ export const useGameSession = () => {
     }
   };
 
-  const updateCurrentStage = async (stageNumber) => {
+const updateCurrentStage = async (stageNumber) => {
     if (!session) return;
 
     try {
@@ -116,6 +116,7 @@ export const useGameSession = () => {
       setSession(updatedSession);
       return updatedSession;
     } catch (err) {
+      setError("Failed to update stage");
       throw new Error("Failed to update stage");
     }
   };
@@ -128,7 +129,7 @@ export const useGameSession = () => {
     addHypothesis,
     updateHypothesis,
     deleteHypothesis,
-    moveHypothesis,
+moveHypothesis,
     updateCurrentStage
   };
 };

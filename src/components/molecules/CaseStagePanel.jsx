@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import React from "react";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
@@ -6,7 +7,9 @@ const CaseStagePanel = ({
   stages, 
   currentStage, 
   onStageSelect,
-  className 
+  stageConfirmation = {},
+  onStageConfirmation,
+  className
 }) => {
   return (
     <div className={cn("bg-white rounded-lg shadow-sm border", className)}>
@@ -19,8 +22,11 @@ const CaseStagePanel = ({
             const isCompleted = stageNumber < currentStage;
             
             return (
-              <button
+<div
                 key={stage.Id}
+                className="relative"
+              >
+                <button
                 onClick={() => isUnlocked && onStageSelect?.(stageNumber)}
                 className={cn(
                   "case-stage-tab flex-1 min-w-0 relative",
@@ -32,21 +38,40 @@ const CaseStagePanel = ({
               >
                 <div className="flex items-center justify-center space-x-2 px-3 py-2">
                   <div className={cn(
-                    "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
-                    isActive ? "bg-primary text-white" : 
+"w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200",
+                    isActive ? "bg-primary text-white ring-2 ring-primary/30" : 
                     isCompleted ? "bg-success text-white" : 
-                    isUnlocked ? "bg-gray-200 text-gray-600" : 
+                    isUnlocked ? "bg-gray-200 text-gray-600 hover:bg-gray-300" : 
                     "bg-gray-100 text-gray-400"
                   )}>
                     {isCompleted ? (
-                      <ApperIcon name="Check" className="w-3 h-3" />
+                      <ApperIcon name="Check" className="w-4 h-4" />
                     ) : !isUnlocked ? (
-                      <ApperIcon name="Lock" className="w-3 h-3" />
+                      <ApperIcon name="Lock" className="w-4 h-4" />
                     ) : (
                       stageNumber
                     )}
                   </div>
-                  <span className="text-sm font-medium truncate">
+                  
+                  {/* Progress Line */}
+                  {stageNumber < stages.length && (
+                    <div className="absolute top-4 left-8 w-16 h-0.5 bg-gray-200">
+                      <div 
+                        className={cn(
+                          "h-full transition-all duration-500",
+                          isCompleted ? "bg-success" : "bg-gray-200"
+                        )}
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="ml-3 flex-1">
+                    <span className={cn(
+                      "text-sm font-medium block",
+                      isActive ? "text-primary" : 
+                      isCompleted ? "text-success" : 
+                      isUnlocked ? "text-gray-700" : "text-gray-400"
+                    )}>
                     {stage.title}
                   </span>
                 </div>
@@ -56,9 +81,10 @@ const CaseStagePanel = ({
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                     layoutId="activeTab"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
+/>
                 )}
               </button>
+              </div>
             );
           })}
         </nav>
@@ -93,17 +119,68 @@ const CaseStagePanel = ({
                 </p>
               </div>
               
-              {stageNumber < stages.length && (
-                <div className="flex justify-end pt-4">
-                  <button
-                    onClick={() => onStageSelect?.(stageNumber + 1)}
-                    className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:from-primary/90 hover:to-secondary/90 transition-all duration-200"
-                  >
-                    <span>Unlock Next Stage</span>
-                    <ApperIcon name="ChevronRight" className="w-4 h-4" />
-                  </button>
+{/* Stage Navigation Controls */}
+              <div className="flex items-center justify-between pt-6 mt-6 border-t border-gray-200">
+                <div className="flex items-center space-x-2">
+                  {currentStage > 1 && (
+                    <button
+                      onClick={() => onStageSelect?.(currentStage - 1)}
+                      className="inline-flex items-center space-x-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                    >
+                      <ApperIcon name="ChevronLeft" className="w-4 h-4" />
+                      <span>Previous Stage</span>
+                    </button>
+                  )}
                 </div>
-              )}
+
+                <div className="flex items-center space-x-3">
+                  {/* Stage Completion Confirmation */}
+                  {!stageConfirmation[currentStage] && (
+                    <button
+                      onClick={() => onStageConfirmation?.(currentStage)}
+                      className="inline-flex items-center space-x-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-all duration-200"
+                    >
+                      <ApperIcon name="Check" className="w-4 h-4" />
+                      <span>Mark Complete</span>
+                    </button>
+                  )}
+                  
+                  {/* Next Stage Button */}
+                  {currentStage < stages.length && stageConfirmation[currentStage] && (
+                    <button
+                      onClick={() => onStageSelect?.(currentStage + 1)}
+                      className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:from-primary/90 hover:to-secondary/90 transition-all duration-200"
+                    >
+                      <span>Next Stage</span>
+                      <ApperIcon name="ChevronRight" className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Stage Progress Summary */}
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">
+                    Progress: Stage {currentStage} of {stages.length}
+                  </span>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-gray-600">Completed:</span>
+                    <span className="font-medium text-success">
+                      {Object.keys(stageConfirmation).length}/{stages.length}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-secondary h-1.5 rounded-full transition-all duration-500"
+                    style={{ 
+                      width: `${(Object.keys(stageConfirmation).length / stages.length) * 100}%` 
+                    }}
+                  />
+</div>
+              </div>
             </motion.div>
           );
         })}

@@ -6,6 +6,8 @@ const CasePresentation = ({
   caseData, 
   currentStage, 
   onStageChange,
+  stageConfirmation = {},
+  onStageConfirmation,
   className 
 }) => {
   if (!caseData) {
@@ -18,9 +20,12 @@ const CasePresentation = ({
       </div>
     );
   }
-
-  const handleStageSelect = (stageNumber) => {
+const handleStageSelect = (stageNumber) => {
     onStageChange(stageNumber);
+  };
+
+  const handleStageConfirm = (stageNumber) => {
+    onStageConfirmation?.(stageNumber);
   };
 
   return (
@@ -52,10 +57,12 @@ const CasePresentation = ({
           </div>
         </div>
 
-        <CaseStagePanel
+<CaseStagePanel
           stages={caseData.stages}
           currentStage={currentStage}
           onStageSelect={handleStageSelect}
+          stageConfirmation={stageConfirmation}
+          onStageConfirmation={handleStageConfirm}
         />
 
         <div className="bg-gradient-to-r from-info/10 to-accent/10 rounded-lg p-4 border border-info/20">
