@@ -8,7 +8,7 @@ const Button = forwardRef(({
   size = "md", 
   children, 
   disabled = false,
-isLoading = false,
+  isLoading = false,
   ...props 
 }, ref) => {
   const variants = {
@@ -28,7 +28,7 @@ isLoading = false,
   };
 
   return (
-    <motion.button
+<motion.button
       ref={ref}
       className={cn(
         "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
